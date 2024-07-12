@@ -45,7 +45,7 @@ export default function App() {
         SelinのToDoリスト
       </Typography>
       <TaskInput onAddTask={handleAddTask} />
-      <TaskList tasks={tasks} onDeleteTask={handleDeleteTask} />
+      <TaskList tasks={tasks} onDeleteTask={handleDeleteTask} onAddTask={handleAddTask} />
       <button onClick={signOut}>Sign out</button>
     </Box>
      )}
