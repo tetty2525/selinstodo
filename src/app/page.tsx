@@ -9,6 +9,10 @@ import { useState } from 'react';
 import { Box, Typography } from '@mui/material';
 import TaskInput from '../sections/TaskInput';
 import TaskList from '../sections/TaskList';
+import { Amplify } from 'aws-amplify';
+import outputs from '../../amplify_outputs.json';
+
+Amplify.configure(outputs);
 
 export default function App() {
   const [tasks, setTasks] = useState<string[]>([]);

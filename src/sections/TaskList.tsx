@@ -1,25 +1,17 @@
-import * as React from 'react';
-import { List, ListItem, ListItemText, ListItemSecondaryAction, IconButton } from '@mui/material';
-import DeleteIcon from '@mui/icons-material/Delete';
+import type { Schema } from '../../amplify/data/resource'
+import { generateClient } from 'aws-amplify/data'
 
-interface TaskListProps {
-  tasks: string[];
-  onDeleteTask: (index: number) => void;
-}
+const client = generateClient<Schema>()
 
-export default function TaskList({ tasks, onDeleteTask }: TaskListProps) {
-  return (
-    <List sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
-      {tasks.map((task, index) => (
-        <ListItem key={index} sx={{ borderBottom: '1px solid #ddd' }}>
-          <ListItemText primary={task} />
-          <ListItemSecondaryAction>
-            <IconButton edge="end" aria-label="delete" onClick={() => onDeleteTask(index)}>
-              <DeleteIcon />
-            </IconButton>
-          </ListItemSecondaryAction>
-        </ListItem>
-      ))}
-    </List>
-  );
+export default function TodoList() {
+  const createTodo = async () => {
+    await client.models.Todo.create({
+      content: window.prompt("Todo content?"),
+      isDone: false
+    })
+  }
+
+  return <div>
+    <button onClick={createTodo}>Add new todo</button>
+  </div>
 }
