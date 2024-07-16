@@ -8,6 +8,7 @@ import * as React from 'react';
 import { useState, useEffect } from 'react';
 import { Box, Typography } from '@mui/material';
 import TaskList from '../sections/TaskList';
+import TaskInput from '../sections/TaskInput'; // 新しく追加
 import { Amplify } from 'aws-amplify';
 import outputs from '../../amplify_outputs.json';
 import { generateClient } from 'aws-amplify/data';
@@ -34,10 +35,26 @@ export default function App() {
 
   const createTodo = async (task: string) => {
     try {
-      await client.models.Todo.create({ content: task });
-      console.log("Task created:", task); // デバッグ情報
+      const response = await client.models.Todo.create({ content: task });;
+      const newTodo = response.data as Schema["Todo"]["type"];
+      console.log("Task created:", newTodo); // デバッグ情報
+      setTodos((prevTodos) => {
+        const updatedTodos = [...prevTodos, newTodo];
+        console.log("Updated todos:", updatedTodos); // 更新後のtodos配列を確認
+        return updatedTodos;
+      }); // ローカルステートを即時更新
     } catch (error) {
       console.error("Create task error:", error); // エラーハンドリング
+    }
+  }
+
+  const deleteTodo = async (id: string) => {
+    try {
+      await client.models.Todo.delete({ id });
+      console.log("Task deleted:", id); // デバッグ情報
+      setTodos((prevTodos) => prevTodos.filter(todo => todo.id !== id)); // ローカルステートを即時更新
+    } catch (error) {
+      console.error("Delete task error:", error); // エラーハンドリング
     }
   }
 
@@ -58,7 +75,8 @@ export default function App() {
             <Typography variant="h2" component="h1" gutterBottom align="center">
               SelinのToDoリスト
             </Typography>
-            <TaskList onDeleteTask={() => { } } onAddTask={createTodo} tasks={todos} />
+            <TaskInput onAddTask={createTodo} /> {/* 新しく追加 */}
+            <TaskList onDeleteTask={deleteTodo} tasks={todos} />
             <button onClick={signOut}>Sign out</button>
           </Box>
         )}
